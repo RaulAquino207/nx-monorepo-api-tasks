@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 
-import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import * as path from "path";
@@ -10,7 +9,7 @@ import * as path from "path";
     ignoreEnvFile: process.env.NODE_ENV != 'development',
     envFilePath: path.resolve(__dirname, '../../../dev.env'),
   })],
-  controllers: [AppController],
+  controllers: [],
   providers: [AppService],
 })
 export class AppModule {}
