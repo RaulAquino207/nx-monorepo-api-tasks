@@ -3,8 +3,6 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from 'libs/database/src';
 import * as path from 'path';
-import { DataSource } from 'typeorm';
-import { User } from '../../../../libs/database/src/lib/postgres/models/user.entity';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 @Module({
@@ -16,13 +14,6 @@ import { AppService } from './app.service';
     DatabaseModule,
   ],
   controllers: [AppController],
-  providers: [
-    AppService,
-    {
-      provide: 'USER_REPOSITORY',
-      useFactory: (dataSource: DataSource) => dataSource.getRepository(User),
-      inject: ['DATA_SOURCE'],
-    },
-  ],
+  providers: [AppService],
 })
 export class AppModule {}

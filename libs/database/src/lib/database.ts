@@ -3,7 +3,7 @@ import { User } from './postgres/models/user.entity';
 
 export const databaseProviders = [
   {
-    provide: 'DATA_SOURCE',
+    provide: 'POSTGRES_DATASOURCE',
     useFactory: async () => {
       const dataSource = new DataSource({
         type: 'postgres',
