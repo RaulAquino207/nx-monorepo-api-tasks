@@ -1,11 +1,11 @@
 import { INestApplication } from '@nestjs/common';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { DocumentBuilder, OpenAPIObject, SwaggerModule } from '@nestjs/swagger';
 
 export const createSwaggerConfig = (
   title: string,
   description: string,
   version: string,
-  prefix: string = 'api',
+  prefix: string = 'api'
 ) => {
   const config = new DocumentBuilder()
     .addBearerAuth(
@@ -17,8 +17,14 @@ export const createSwaggerConfig = (
         description: 'Enter JWT token',
         in: 'header',
       },
-      'JWT-auth',
+      'JWT-auth'
     )
+    .addSecurity('bearer', {
+      type: 'apiKey',
+      in: 'header',
+      name: 'Authorization',
+    })
+    .addSecurityRequirements('bearer')
     .setTitle(title)
     .setDescription(description)
     .setVersion(version)
@@ -26,6 +32,18 @@ export const createSwaggerConfig = (
 
   return (app: INestApplication) => {
     const document = SwaggerModule.createDocument(app, config);
+
+    Object.values((document as OpenAPIObject).paths).forEach((path: any) => {
+      Object.values(path).forEach((method: any) => {
+        if (
+          Array.isArray(method.security) &&
+          method.security.includes('isPublic')
+        ) {
+          method.security = [];
+        }
+      });
+    });
+
     SwaggerModule.setup(prefix, app, document);
   };
 };
