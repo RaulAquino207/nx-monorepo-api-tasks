@@ -2,8 +2,11 @@ import { ForbiddenException, Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { User } from 'libs/database/src/lib/postgres/models/user.entity';
-import { Repository } from 'typeorm';
-import { AuthDto } from './dto/auth.dto';
+import { Not, Repository } from 'typeorm';
+import { JwtPayload } from '../../types/jwt-payload.type';
+import { Tokens } from '../../types/tokens.type';
+import { SigninDto } from './dto/signin.dto';
+import { SignupDto } from './dto/singup.dto';
 
 @Injectable()
 export class AuthService {
@@ -13,14 +16,14 @@ export class AuthService {
     private jwtService: JwtService
   ) {}
 
-  async singupLocal(authDto: AuthDto) {
-    const { email, password } = authDto;
+  async singupLocal(signupDto: SignupDto): Promise<Tokens> {
+    const { email, password, first_name, last_name } = signupDto;
     const hashedPassword = await this.hashData(password);
     const user = await this.userRepository.save({
       email: email,
       password: hashedPassword,
-      firstName: 'Raul',
-      lastName: 'Aquino',
+      firstName: first_name,
+      lastName: last_name,
     });
 
     const tokens = await this.getTokens(user.id, user.email);
@@ -28,8 +31,8 @@ export class AuthService {
     return tokens;
   }
 
-  async signinLocal(authDto: AuthDto) {
-    const { email, password } = authDto;
+  async signinLocal(signinDto: SigninDto): Promise<Tokens> {
+    const { email, password } = signinDto;
     const user = await this.userRepository.findOne({
       where: {
         email: email,
@@ -48,22 +51,21 @@ export class AuthService {
     return tokens;
   }
 
-  async logout() {
-    // await this.userRepository.update(
-    //   {
-    //     id: 'ae412992-8ea9-4d20-86df-bb6158f48b63',
-    //     hashedRefreshToken: Not('NULL'),
-    //   },
-    //   {
-    //     hashedRefreshToken: null,
-    //   }
-    // );
-    // return true;
-
-    return 'ok';
+  async logout(user: JwtPayload) {
+    const { sub } = user;
+    await this.userRepository.update(
+      {
+        id: sub,
+        hashedRefreshToken: Not('NULL'),
+      },
+      {
+        hashedRefreshToken: null,
+      }
+    );
+    return true;
   }
 
-  async refresh() {
+  async refresh(): Promise<Tokens> {
     const user = await this.userRepository.findOne({
       where: {
         id: 'ae412992-8ea9-4d20-86df-bb6158f48b63',
@@ -88,14 +90,14 @@ export class AuthService {
     return bcrypt.hash(data, 10);
   }
 
-  async updateRefreshTokenHash(userId: string, rt: string) {
+  async updateRefreshTokenHash(userId: string, rt: string): Promise<void> {
     const hash = await this.hashData(rt);
     await this.userRepository.update(userId, {
       hashedRefreshToken: hash,
     });
   }
 
-  async getTokens(userId: string, email: string) {
+  async getTokens(userId: string, email: string): Promise<Tokens> {
     const [at, rt] = await Promise.all([
       this.jwtService.signAsync(
         {

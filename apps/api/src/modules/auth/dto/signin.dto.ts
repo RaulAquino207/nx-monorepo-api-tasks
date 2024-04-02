@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Match } from 'apps/api/src/decorators/match.decorator';
 import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
-export class AuthDto {
+export class SigninDto {
   @IsNotEmpty()
   @IsEmail()
   @ApiProperty({
@@ -20,16 +20,4 @@ export class AuthDto {
     required: true,
   })
   password: string;
-
-  @Match(AuthDto, (u) => u.password, {
-    message: 'The passwords entered do not match.',
-  })
-  @IsNotEmpty()
-  @IsOptional()
-  @ApiProperty({
-    example: '123456',
-    description: '',
-    required: false,
-  })
-  password_confirmation: string;
 }

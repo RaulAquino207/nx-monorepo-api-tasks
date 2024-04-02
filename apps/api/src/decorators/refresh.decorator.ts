@@ -1,9 +1,9 @@
 import { SetMetadata, applyDecorators } from '@nestjs/common';
 
-export const Public = () => {
+export const Refresh = () => {
   const metadata = [
     SetMetadata('isPublic', true),
-    SetMetadata('swagger/apiSecurity', ['isPublic']),
+    SetMetadata('swagger/apiSecurity', ['isPublic', 'isRefresh']),
   ];
   return applyDecorators(...metadata);
 };

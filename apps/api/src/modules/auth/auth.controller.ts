@@ -1,9 +1,14 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
-import { ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Post, SetMetadata, UseGuards } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { Public } from '../../decorators/public.decorator';
+import { User } from '../../decorators/user.decorator';
 import { RefreshTokenGuard } from '../../guards/refresh-token.guard';
+import { JwtPayloadWithRefreshToken } from '../../types/jwt-payload-with-refresh-token.type';
+import { JwtPayload } from '../../types/jwt-payload.type';
 import { AuthService } from './auth.service';
-import { AuthDto } from './dto/auth.dto';
+import { SigninDto } from './dto/signin.dto';
+import { SignupDto } from './dto/singup.dto';
+import { Refresh } from '../../decorators/refresh.decorator';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -11,26 +16,28 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Public()
-  @ApiSecurity('none')
   @Post('local/signup')
-  singupLocal(@Body() authDto: AuthDto) {
-    return this.authService.singupLocal(authDto);
-  }
-
-  @Post('local/signin')
-  signinLocal(@Body() authDto: AuthDto) {
-    return this.authService.signinLocal(authDto);
-  }
-
-  @Post('logout')
-  logout() {
-    return this.authService.logout();
+  singupLocal(@Body() signupDto: SignupDto) {
+    return this.authService.singupLocal(signupDto);
   }
 
   @Public()
+  @Post('local/signin')
+  signinLocal(@Body() signinDto: SigninDto) {
+    return this.authService.signinLocal(signinDto);
+  }
+
+  @Post('logout')
+  logout(@User() user: JwtPayload) {
+    console.log("🚀 ~ AuthController ~ logout ~ user:", user)
+    return this.authService.logout(user);
+  }
+
+  @Refresh()
   @UseGuards(RefreshTokenGuard)
   @Post('refresh')
-  refresh() {
+  refresh(@User() user: JwtPayloadWithRefreshToken) {
+    console.log("🚀 ~ AuthController ~ refresh ~ user:", user)
     return this.authService.refresh();
   }
 }

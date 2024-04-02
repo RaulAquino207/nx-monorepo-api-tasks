@@ -8,26 +8,17 @@ export const createSwaggerConfig = (
   prefix: string = 'api'
 ) => {
   const config = new DocumentBuilder()
-    .addBearerAuth(
-      {
-        type: 'http',
-        scheme: 'bearer',
-        bearerFormat: 'JWT',
-        name: 'JWT',
-        description: 'Enter JWT token',
-        in: 'header',
-      },
-      'JWT-auth'
-    )
-    .addSecurity('bearer', {
-      type: 'apiKey',
-      in: 'header',
-      name: 'Authorization',
-    })
-    .addSecurityRequirements('bearer')
     .setTitle(title)
     .setDescription(description)
     .setVersion(version)
+    .addSecurity('JWT-auth', {
+      type: 'http',
+      scheme: 'bearer',
+      name: 'JWT',
+      in: 'header',
+      description: 'Enter JWT token',
+    })
+    .addSecurityRequirements('JWT-auth')
     .build();
 
   return (app: INestApplication) => {
@@ -37,9 +28,12 @@ export const createSwaggerConfig = (
       Object.values(path).forEach((method: any) => {
         if (
           Array.isArray(method.security) &&
-          method.security.includes('isPublic')
+          method.security.includes('isPublic') &&
+          !method.security.includes('isRefresh')
         ) {
           method.security = [];
+        } else {
+          method.security = undefined;
         }
       });
     });
