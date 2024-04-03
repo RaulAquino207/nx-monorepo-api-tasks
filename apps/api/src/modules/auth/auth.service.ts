@@ -7,6 +7,7 @@ import { JwtPayload } from '../../types/jwt-payload.type';
 import { Tokens } from '../../types/tokens.type';
 import { SigninDto } from './dto/signin.dto';
 import { SignupDto } from './dto/singup.dto';
+import { JwtPayloadWithRefreshToken } from '../../types/jwt-payload-with-refresh-token.type';
 
 @Injectable()
 export class AuthService {
@@ -51,8 +52,8 @@ export class AuthService {
     return tokens;
   }
 
-  async logout(user: JwtPayload) {
-    const { sub } = user;
+  async logout(jwtPayload: JwtPayload) {
+    const { sub } = jwtPayload;
     await this.userRepository.update(
       {
         id: sub,
@@ -65,19 +66,30 @@ export class AuthService {
     return true;
   }
 
-  async refresh(): Promise<Tokens> {
+  async refresh(
+    jwtPayloadWithRefreshToken: JwtPayloadWithRefreshToken
+  ): Promise<Tokens> {
     const user = await this.userRepository.findOne({
       where: {
-        id: 'ae412992-8ea9-4d20-86df-bb6158f48b63',
+        id: jwtPayloadWithRefreshToken.sub,
       },
     });
     if (!user || !user.hashedRefreshToken)
       throw new ForbiddenException('Access Denied');
+    console.log(
+      '🚀 ~ AuthService ~ user.hashedRefreshToken:',
+      user.hashedRefreshToken
+    );
+    console.log(
+      '🚀 ~ AuthService ~ jwtPayloadWithRefreshToken.refreshToken:',
+      jwtPayloadWithRefreshToken.refreshToken
+    );
 
     const rtMatches = await bcrypt.compare(
       user.hashedRefreshToken,
-      '$2b$10$fzpj45s5zWoR2ArFb8Ijreu68R3OWAQAXXntmlMrwCjZ8a1GcQSXW'
+      jwtPayloadWithRefreshToken.refreshToken
     );
+    console.log('🚀 ~ AuthService ~ rtMatches:', rtMatches);
     if (!rtMatches) throw new ForbiddenException('Access Denied');
 
     const tokens = await this.getTokens(user.id, user.email);
@@ -105,8 +117,8 @@ export class AuthService {
           email,
         },
         {
-          secret: 'at-secret',
-          expiresIn: 60 * 15,
+          secret: process.env.ACCESS_TOKEN_SECRET,
+          expiresIn: process.env.ACCESS_TOKEN_EXPIRATION_TIME,
         }
       ),
       this.jwtService.signAsync(
@@ -115,8 +127,8 @@ export class AuthService {
           email,
         },
         {
-          secret: 'rt-secret',
-          expiresIn: 60 * 60 * 24 * 7,
+          secret: process.env.REFRESH_TOKEN_SECRET,
+          expiresIn: process.env.REFRESH_TOKEN_EXPIRATION_TIME,
         }
       ),
     ]);

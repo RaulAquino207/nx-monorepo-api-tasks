@@ -28,16 +28,14 @@ export class AuthController {
   }
 
   @Post('logout')
-  logout(@User() user: JwtPayload) {
-    console.log("🚀 ~ AuthController ~ logout ~ user:", user)
-    return this.authService.logout(user);
+  logout(@User() jwtPayload: JwtPayload) {
+    return this.authService.logout(jwtPayload);
   }
 
   @Refresh()
   @UseGuards(RefreshTokenGuard)
   @Post('refresh')
-  refresh(@User() user: JwtPayloadWithRefreshToken) {
-    console.log("🚀 ~ AuthController ~ refresh ~ user:", user)
-    return this.authService.refresh();
+  refresh(@User() jwtPayloadWithRefreshToken: JwtPayloadWithRefreshToken) {
+    return this.authService.refresh(jwtPayloadWithRefreshToken);
   }
 }
