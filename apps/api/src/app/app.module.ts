@@ -10,6 +10,7 @@ import { AppController } from './app.controller';
     ConfigModule.forRoot({
       ignoreEnvFile: process.env.NODE_ENV != 'development',
       envFilePath: path.resolve(__dirname, '../../../dev.env'),
+      isGlobal: true,
     }),
     AuthModule,
   ],

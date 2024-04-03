@@ -8,13 +8,15 @@ import { Tokens } from '../../types/tokens.type';
 import { SigninDto } from './dto/signin.dto';
 import { SignupDto } from './dto/singup.dto';
 import { JwtPayloadWithRefreshToken } from '../../types/jwt-payload-with-refresh-token.type';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
   constructor(
     @Inject('USER_REPOSITORY')
     private userRepository: Repository<User>,
-    private jwtService: JwtService
+    private jwtService: JwtService,
+    private config: ConfigService
   ) {}
 
   async singupLocal(signupDto: SignupDto): Promise<Tokens> {
@@ -76,20 +78,11 @@ export class AuthService {
     });
     if (!user || !user.hashedRefreshToken)
       throw new ForbiddenException('Access Denied');
-    console.log(
-      '🚀 ~ AuthService ~ user.hashedRefreshToken:',
-      user.hashedRefreshToken
-    );
-    console.log(
-      '🚀 ~ AuthService ~ jwtPayloadWithRefreshToken.refreshToken:',
-      jwtPayloadWithRefreshToken.refreshToken
-    );
 
     const rtMatches = await bcrypt.compare(
       user.hashedRefreshToken,
       jwtPayloadWithRefreshToken.refreshToken
     );
-    console.log('🚀 ~ AuthService ~ rtMatches:', rtMatches);
     if (!rtMatches) throw new ForbiddenException('Access Denied');
 
     const tokens = await this.getTokens(user.id, user.email);
@@ -117,8 +110,8 @@ export class AuthService {
           email,
         },
         {
-          secret: process.env.ACCESS_TOKEN_SECRET,
-          expiresIn: process.env.ACCESS_TOKEN_EXPIRATION_TIME,
+          secret: this.config.get<string>('ACCESS_TOKEN_SECRET'),
+          expiresIn: this.config.get<string>('ACCESS_TOKEN_EXPIRATION_TIME'),
         }
       ),
       this.jwtService.signAsync(
@@ -127,8 +120,8 @@ export class AuthService {
           email,
         },
         {
-          secret: process.env.REFRESH_TOKEN_SECRET,
-          expiresIn: process.env.REFRESH_TOKEN_EXPIRATION_TIME,
+          secret: this.config.get<string>('REFRESH_TOKEN_SECRET'),
+          expiresIn: this.config.get<string>('REFRESH_TOKEN_EXPIRATION_TIME'),
         }
       ),
     ]);
