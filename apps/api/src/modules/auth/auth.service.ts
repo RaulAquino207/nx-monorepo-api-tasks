@@ -9,6 +9,7 @@ import { SigninDto } from './dto/signin.dto';
 import { SignupDto } from './dto/singup.dto';
 import { JwtPayloadWithRefreshToken } from '../../types/jwt-payload-with-refresh-token.type';
 import { ConfigService } from '@nestjs/config';
+import { ClsService } from 'nestjs-cls';
 
 @Injectable()
 export class AuthService {
@@ -16,7 +17,8 @@ export class AuthService {
     @Inject('USER_REPOSITORY')
     private userRepository: Repository<User>,
     private jwtService: JwtService,
-    private config: ConfigService
+    private config: ConfigService,
+    private readonly cls: ClsService,
   ) {}
 
   async singupLocal(signupDto: SignupDto): Promise<Tokens> {
@@ -55,6 +57,10 @@ export class AuthService {
   }
 
   async logout(jwtPayload: JwtPayload) {
+    const userId = this.cls.get('user');
+    const requestId = this.cls.get('request-id');
+    console.log("🚀 ~ AuthService ~ singupLocal ~ requestId:", requestId)
+    console.log("🚀 ~ AuthService ~ singupLocal ~ userId:", userId)
     const { sub } = jwtPayload;
     await this.userRepository.update(
       {

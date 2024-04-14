@@ -1,4 +1,4 @@
-import { Body, Controller, Post, SetMetadata, UseGuards } from '@nestjs/common';
+import { Body, Controller, ForbiddenException, Post, SetMetadata, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Public } from '../../decorators/public.decorator';
 import { User } from '../../decorators/user.decorator';
@@ -18,6 +18,7 @@ export class AuthController {
   @Public()
   @Post('local/signup')
   singupLocal(@Body() signupDto: SignupDto) {
+    // throw new ForbiddenException();
     return this.authService.singupLocal(signupDto);
   }
 
