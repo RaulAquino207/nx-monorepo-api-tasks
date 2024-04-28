@@ -2,7 +2,11 @@
   "name": "@nx-monorepo-api-tasks/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
+  "scripts": {
+    "start:api:dev": "npx nx run api:serve --configuration=development",
+    "start:tasks:dev": "npx nx run tasks:serve --configuration=development",
+    "start:postgres": "docker-compose -f dependencies/docker/docker-compose.yml -p nx-monorepo up -d postgres"
+  },
   "private": true,
   "dependencies": {
     "@nestjs/common": "^10.0.2",

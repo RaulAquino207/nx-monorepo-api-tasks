@@ -1,0 +1,29 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "type": "node",
+        "request": "launch",
+        "name": "Debug API",
+        "cwd": "${workspaceFolder}/apps/api",
+        "runtimeExecutable": "npm",
+        "runtimeArgs": [
+          "run",
+          "start:api:dev",
+        ],
+        "console": "integratedTerminal"
+      },
+      {
+        "type": "node",
+        "request": "launch",
+        "name": "Debug TASKS",
+        "cwd": "${workspaceFolder}/apps/tasks",
+        "runtimeExecutable": "npm",
+        "runtimeArgs": [
+          "run",
+          "start:tasks:dev",
+        ],
+        "console": "integratedTerminal"
+      },
+    ]
+  }
