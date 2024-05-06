@@ -5,6 +5,7 @@ import * as path from 'path';
 import { AccessTokenGuard } from '../guards/access-token.guard';
 import { AuthModule } from '../modules/auth/auth.module';
 import { AppController } from './app.controller';
+import { UserModule } from '../modules/user/user.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -13,6 +14,7 @@ import { AppController } from './app.controller';
       isGlobal: true,
     }),
     AuthModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [

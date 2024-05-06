@@ -1,8 +1,8 @@
 import { User } from "libs/database/src/lib/postgres/models/user.entity";
-import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
+import { FindOneOptions } from "typeorm";
 
 export abstract class UserRepository {
-  abstract create(createUserDto: CreateUserDto): Promise<User>;
-  abstract update(updateUserDto: UpdateUserDto): Promise<User>;
+  abstract update(id: string, updateUserDto: UpdateUserDto): Promise<User>;
+  abstract findOne(options: FindOneOptions<User>): Promise<User>;
 }

@@ -1,10 +1,13 @@
 import { DataSource } from 'typeorm';
-import { User } from '../models/user.entity';
+import { PostgresUserRepository } from '../repositories/user.repository';
 
 export const userProviders = [
   {
     provide: 'USER_REPOSITORY',
-    useFactory: (dataSource: DataSource) => dataSource.getRepository(User),
+    useFactory: (dataSource: DataSource) => {
+      const repository = new PostgresUserRepository(dataSource);
+      return repository;
+    },
     inject: ['POSTGRES_DATASOURCE'],
   },
 ];
