@@ -11,10 +11,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 export class UserService {
 
   constructor(
-    @Inject('USER_REPOSITORY')
-    private readonly userRepository: UserRepository,
+    @Inject('POSTGRES_USER_REPOSITORY')
+    private readonly postgresUserRepository: UserRepository,
+    @Inject('MONGO_USER_REPOSITORY')
+    private readonly mongoUserRepository: UserRepository,
   ) { }
-  create(createUserDto: CreateUserDto) {
+  async create(createUserDto: CreateUserDto) {
+    await this.postgresUserRepository.create();
+    await this.mongoUserRepository.create();
     return 'This action adds a new user';
   }
 
@@ -27,7 +31,7 @@ export class UserService {
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
-    await this.userRepository.update(id, updateUserDto);
+    return `This action returns a #${id} user`;
   }
 
   remove(id: number) {

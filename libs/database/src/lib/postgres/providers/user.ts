@@ -1,9 +1,9 @@
 import { DataSource } from 'typeorm';
 import { PostgresUserRepository } from '../repositories/user.repository';
 
-export const userProviders = [
+export const postgresUserProviders = [
   {
-    provide: 'USER_REPOSITORY',
+    provide: 'POSTGRES_USER_REPOSITORY',
     useFactory: (dataSource: DataSource) => {
       const repository = new PostgresUserRepository(dataSource);
       return repository;

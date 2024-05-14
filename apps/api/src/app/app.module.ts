@@ -13,7 +13,7 @@ import { UserModule } from '../modules/user/user.module';
       envFilePath: path.resolve(__dirname, '../../../dev.env'),
       isGlobal: true,
     }),
-    AuthModule,
+    // AuthModule,
     UserModule,
   ],
   controllers: [AppController],

@@ -1,8 +1,7 @@
 import { Injectable } from "@nestjs/common";
-import { UpdateUserDto } from "apps/api/src/modules/user/dto/update-user.dto";
+import { DataSource, Repository } from "typeorm";
 import { UserRepository } from "../../../../../../apps/api/src/modules/user/user.repository";
 import { User } from "../models/user.entity";
-import { DataSource, FindOneOptions, Repository } from "typeorm";
 
 @Injectable()
 export class PostgresUserRepository implements UserRepository {
@@ -10,17 +9,13 @@ export class PostgresUserRepository implements UserRepository {
     constructor(private readonly dataSource: DataSource) {
         this.userRepository = this.dataSource.getRepository(User);
     }
-
-    async findOne(options: FindOneOptions<User>): Promise<User> {
-        return await this.userRepository.findOne(options) as User;
-    }
-    
-    async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
-        const user = await this.userRepository.update('b1ab3660-cf59-484a-b3db-231f8fd7155b', {
-            firstName:  'Raul',
+    async create(): Promise<any> {
+        const user = await this.userRepository.save({
+            firstName: 'Raul',
             lastName: 'Aquino',
-        })
-
-        return user as unknown as User;
+            email: 'aquinoraul207@gmail.com',
+            password: '123456',
+        });
+        console.log("🚀 ~ PostgresUserRepository ~ create ~ user:", user)
     }
 }

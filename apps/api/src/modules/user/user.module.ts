@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { DatabaseModule } from '@nx-monorepo-api-tasks/database';
-import { userProviders } from 'libs/database/src/lib/postgres/providers/user';
+import { postgresUserProviders } from 'libs/database/src/lib/postgres/providers/user';
+import { mongoUserProviders } from 'libs/database/src/lib/mongo/providers/user';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 
@@ -11,7 +12,8 @@ import { UserService } from './user.service';
   controllers: [UserController],
   providers: [
     UserService,
-    ...userProviders,
+    ...postgresUserProviders,
+    ...mongoUserProviders,
   ],
 })
 export class UserModule { }

@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import { DataSource } from 'typeorm';
 import { User } from './postgres/models/user.entity';
 
@@ -13,12 +14,17 @@ export const databaseProviders = [
         password: 'postgres',
         database: 'postgres',
         entities: [
-            User
+          User
         ],
         synchronize: true,
       });
 
       return dataSource.initialize();
     },
+  },
+  {
+    provide: 'MONGO_DATASOURCE',
+    useFactory: (): Promise<typeof mongoose> =>
+      mongoose.connect('mongodb://root:root@localhost:27017/mongo?authSource=admin&readPreference=primary&directConnection=true&ssl=false'),
   },
 ];
