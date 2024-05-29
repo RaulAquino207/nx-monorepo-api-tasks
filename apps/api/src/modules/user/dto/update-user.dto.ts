@@ -28,13 +28,4 @@ export class UpdateUserDto {
         required: false,
     })
     last_name: string;
-
-    @IsOptional()
-    @IsString()
-    @ApiProperty({
-        example: '123456',
-        description: '',
-        required: true,
-    })
-    password: string;
 }

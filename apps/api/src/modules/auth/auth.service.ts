@@ -9,11 +9,14 @@ import { SigninDto } from './dto/signin.dto';
 import { SignupDto } from './dto/singup.dto';
 import { JwtPayloadWithRefreshToken } from '../../types/jwt-payload-with-refresh-token.type';
 import { ConfigService } from '@nestjs/config';
+import { UserRepository } from '../user/user.repository';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @Inject('USER_REPOSITORY')
+    // @Inject('POSTGRES_USER_REPOSITORY')
+    // private readonly postgresUserRepository: UserRepository,
+    @Inject('POSTGRES_USER_REPOSITORY')
     private userRepository: Repository<User>,
     private jwtService: JwtService,
     private config: ConfigService

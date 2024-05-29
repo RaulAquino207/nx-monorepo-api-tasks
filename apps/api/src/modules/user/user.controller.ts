@@ -19,20 +19,9 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Public()
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
-  }
-
-  @Public()
-  @Get()
-  findAll() {
-    return this.userService.findAll();
-  }
-
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
+    return this.userService.findOne(id);
   }
 
   @Public()
@@ -41,6 +30,7 @@ export class UserController {
     return this.userService.update(id, updateUserDto);
   }
 
+  @Public()
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.userService.remove(+id);

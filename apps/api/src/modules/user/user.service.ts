@@ -13,24 +13,21 @@ export class UserService {
   constructor(
     @Inject('POSTGRES_USER_REPOSITORY')
     private readonly postgresUserRepository: UserRepository,
-    @Inject('MONGO_USER_REPOSITORY')
-    private readonly mongoUserRepository: UserRepository,
+    // @Inject('MONGO_USER_REPOSITORY')
+    // private readonly mongoUserRepository: UserRepository,
   ) { }
   async create(createUserDto: CreateUserDto) {
-    await this.postgresUserRepository.create();
-    await this.mongoUserRepository.create();
+    // await this.postgresUserRepository.create();
+    // await this.mongoUserRepository.create();
     return 'This action adds a new user';
   }
 
-  async findAll() {
-    return `This action returns all user`;
-  }
-
-  findOne(id: number) {
+  findOne(id: string) {
     return `This action returns a #${id} user`;
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
+    this.postgresUserRepository.update(id, updateUserDto);
     return `This action returns a #${id} user`;
   }
 
