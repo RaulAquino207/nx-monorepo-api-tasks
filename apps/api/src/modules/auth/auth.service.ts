@@ -14,13 +14,13 @@ import { UserRepository } from '../user/user.repository';
 @Injectable()
 export class AuthService {
   constructor(
-    // @Inject('POSTGRES_USER_REPOSITORY')
-    // private readonly postgresUserRepository: UserRepository,
+    @Inject('POSTGRES_USER_REPOSITORY')
+    private readonly postgresUserRepository: UserRepository,
     @Inject('POSTGRES_USER_REPOSITORY')
     private userRepository: Repository<User>,
     private jwtService: JwtService,
     private config: ConfigService
-  ) {}
+  ) { }
 
   async singupLocal(signupDto: SignupDto): Promise<Tokens> {
     const { email, password, first_name, last_name } = signupDto;
@@ -134,4 +134,4 @@ export class AuthService {
       refresh_token: rt,
     };
   }
-    }
+}

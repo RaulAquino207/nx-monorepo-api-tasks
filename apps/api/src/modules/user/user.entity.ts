@@ -1,17 +1,18 @@
 import { Replace } from '../../../../../libs/helpers/Replace';
 
-export interface UserProps {
+export interface IUser {
     id: string;
     firstName: string;
     lastName: string;
     email: string;
+    password?: string;
 }
 
 export class UserEntity {
-    private userProps: UserProps;
+    private userProps: IUser;
 
     constructor(
-        userProps: Replace<UserProps, { id?: string }>
+        userProps: Replace<IUser, { id?: string }>
     ) {
         this.userProps = {
             ...userProps,
@@ -49,5 +50,13 @@ export class UserEntity {
 
     set email(value: string) {
         this.userProps.email = value;
+    }
+
+    get password(): string {
+        return this.userProps.password;
+    }
+
+    set password(value: string) {
+        this.userProps.password = value;
     }
 }
